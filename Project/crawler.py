@@ -7,6 +7,30 @@ from bs4 import BeautifulSoup
 import time
 
 driver = webdriver.Chrome("/Users/sml/chromedriver")
+storeInfo = []
+
+class storeInfoClass:
+    def setName(name):
+        self.name = name
+    def setBranch(branch):
+        self.branch = branch
+    def setPhoneNum(phoneNum):
+        self.phoneNum = phoneNum
+    def setAddress(address):
+        self.address = address
+    def getName():
+        return self.name
+    def getBranch():
+        return self.branch
+    def getPhoneNum():
+        return self.phoneNum
+    def getAddress():
+        return self.address
+    
+
+    
+
+
 
 def initCrawler():
     #----------These are headless options-----------------
@@ -26,7 +50,7 @@ def getMap():
     driver.get("http://map.daum.net")
     elem = driver.find_element_by_name('q')
     elem.clear()
-    elem.send_keys("파리바게뜨")
+    elem.send_keys("스타벅스")
     elem.send_keys(Keys.RETURN)
     time.sleep(0.5)
     clickElem = driver.find_element(By.ID, "info.search.place.more")
@@ -38,6 +62,7 @@ def startCrawling():
     soup=BeautifulSoup(_html, "lxml")
     for e in soup.find_all("li", class_="PlaceItem"):
         print(e.h6.a["title"])
+    
 
 
 def main():
@@ -75,5 +100,4 @@ if __name__=="__main__":
 
 
 #driver.quit()
-
 
