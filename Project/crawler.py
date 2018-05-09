@@ -7,24 +7,29 @@ from bs4 import BeautifulSoup
 import time
 
 driver = webdriver.Chrome("/Users/sml/chromedriver")
-storeInfo = []
+storeInfos = []
 
 class storeInfoClass:
-    def setName(name):
+    def __init__(self):
+        self.name = 0
+        self.branch = 0
+        self.phoneNum = 0
+        self.address = 0
+    def setName(self, name):
         self.name = name
-    def setBranch(branch):
+    def setBranch(self, branch):
         self.branch = branch
-    def setPhoneNum(phoneNum):
+    def setPhoneNum(self, phoneNum):
         self.phoneNum = phoneNum
-    def setAddress(address):
+    def setAddress(self, address):
         self.address = address
-    def getName():
+    def getName(self):
         return self.name
-    def getBranch():
+    def getBranch(self):
         return self.branch
-    def getPhoneNum():
+    def getPhoneNum(self):
         return self.phoneNum
-    def getAddress():
+    def getAddress(self):
         return self.address
     
 
@@ -58,10 +63,20 @@ def getMap():
     time.sleep(0.5)
 
 def startCrawling():
+    # 1페이지에 15개의 정보!
+    infoCount = 0
     _html=driver.page_source
     soup=BeautifulSoup(_html, "lxml")
     for e in soup.find_all("li", class_="PlaceItem"):
-        print(e.h6.a["title"])
+        tempClass = storeInfoClass()
+        tempName = e.h6.a["title"]
+        realName = tempName.split(" ")
+        tempClass.setName(realName[0])
+        tempClass.setBranch(realName[1])
+        storeInfos.append(tempClass)
+    for e in storeInfos:
+#         print(e.getName()+"---"+e.getBranch())
+#         print(e.h6.a["title"])
     
 
 
@@ -71,12 +86,7 @@ def main():
 if __name__=="__main__":
     main()
 
-#   //*[@id="panel"]/div[2]/div[1]/div[2]/div[2]/ul/li[1]/div[1]/dl/dt/a
-#     _htmlTree = etree.HTML(_html)
-#     result = etree.tostring(_htmlTree, pretty_print=True, method="html")
-#     print(result)
-#     nodes = result.xpath('//*[@id="panel"]/div[2]/div[1]/div[2]/div[2]/ul/li[1]/div[1]/dl/dt/a')
-#     print(nodes)
+
 
 #     driver.implicitly_wait(5)
 #     location = '//*[@id="panel"]/div[2]/div[1]/div[2]/div[2]/div/div/a[1]'
@@ -100,4 +110,3 @@ if __name__=="__main__":
 
 
 #driver.quit()
-
