@@ -64,9 +64,12 @@ def getMap():
 
 def startCrawling():
     # 1페이지에 15개의 정보!
-    infoCount = 0
+    countStart = 0
+    countEnd = 0
     _html=driver.page_source
     soup=BeautifulSoup(_html, "lxml")
+    
+
     for e in soup.find_all("li", class_="PlaceItem"):
         tempClass = storeInfoClass()
         tempName = e.h6.a["title"]
@@ -74,8 +77,20 @@ def startCrawling():
         tempClass.setName(realName[0])
         tempClass.setBranch(realName[1])
         storeInfos.append(tempClass)
+        countEnd += 1
+    for i in range(countStart, countEnd):
+        tempPhoneNums = []
+        for e in soup.find_all("span", class_="phone"):
+            tempPhoneNums.append(e.text)
+        storeInfos[i].setPhoneNum(tempPhoneNums[i])
+    for i in range(countStart, countEnd):
+        tempAddresses = []
+        for e in soup.find_all("p", class_="newAddress"):
+            tempAddresses.append(e.text)
+        storeInfos[i].setAddress(tempAddresses[i])
+    
     for e in storeInfos:
-#         print(e.getName()+"---"+e.getBranch())
+        print(e.getName()+"***"+e.getBranch()+"***"+e.getPhoneNum()+"***"+e.getAddress())
 #         print(e.h6.a["title"])
     
 
