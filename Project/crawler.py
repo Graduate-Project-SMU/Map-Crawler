@@ -8,7 +8,8 @@ import time
 
 driver = webdriver.Chrome("/Users/sml/chromedriver")
 storeInfos = []
-cities = ['서울특별시 강남구', '서울특별시 강동구', '서울특별시 강서구', '서울특별시 강북구', '서울특별시 관악구', '서울특별시 광진구', '서울특별시 구로구',
+cities = [
+        '서울특별시 강남구', '서울특별시 강동구', '서울특별시 강서구', '서울특별시 강북구', '서울특별시 관악구', '서울특별시 광진구', '서울특별시 구로구',
        '서울특별시 금천구', '서울특별시 노원구', '서울특별시 도봉구', '서울특별시 동대문구', '서울특별시 동작구', '서울특별시 마포구', '서울특별시 서대문구', 
        '서울특별시 서초구', '서울특별시 성북구', '서울특별시 성동구', '서울특별시 송파구', '서울특별시 양천구','서울특별시 영등포구', '서울특별시 용산구',
        '서울특별시 은평구', '서울특별시 종로구', '서울특별시 중구', '서울특별시 중랑구',
@@ -107,7 +108,7 @@ def getCount(query):
             else:
                 return False
 
-def getMap(query):
+def getMapOnce(query):
     driver.get("http://map.daum.net")
     delay = 2 # seconds
     try:
@@ -119,6 +120,11 @@ def getMap(query):
         elem.send_keys(query)
         elem.send_keys(Keys.RETURN)
         time.sleep(1)
+        _html = driver.page_source
+        soup = BeautifulSoup(_html, "lxml")
+        count = soup.find("em", id="info.search.place.cnt")
+        count = int(count.text)
+        print(count)
         try: 
             clickElem = WebDriverWait(driver, delay)\
             .until(EC.presence_of_element_located((By.ID, "info.search.place.more")))
@@ -126,8 +132,9 @@ def getMap(query):
             time.sleep(1)
         except TimeoutException:
             print("Loading took too much time!")
+
     
-def startCrawling():
+def startCrawling(query):
     # ******1페이지에 15개의 정보!******
     pageNo = 2
     countStart = 0
@@ -139,10 +146,13 @@ def startCrawling():
         tempClass = storeInfoClass()
         tempName = e.h6.a["title"]
         realName = tempName.split(" ")
-        tempClass.setName(realName[0])
-        tempClass.setBranch(realName[1])
-        storeInfos.append(tempClass)
-        countEnd += 1
+        if realName[0] == query:
+            tempClass.setName(realName[0])
+            tempClass.setBranch(realName[1])
+            storeInfos.append(tempClass)
+            countEnd += 1
+        else:
+            continue
     for i in range(countStart, countEnd):
         tempPhoneNums = []
         for e in soup.find_all("span", class_="phone"):
@@ -169,13 +179,11 @@ def startCrawling():
 
 def main():
     query = input("상호명을 입력하세요: ")
-    #525개 이상의 데이터
-    if getCount(query) == True:
-    #525개 미만의 데이터
-    else:
-        
-#     getMap(query)
-#     startCrawling()
+    if getCount(query) == True:     #525개 이상의 데이터
+        print("A lot!")
+    else:        #525개 미만의 데이터
+        getMapOnce(query)
+        startCrawling(query)
 if __name__=="__main__":
     main()
 
