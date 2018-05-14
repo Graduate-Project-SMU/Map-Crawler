@@ -70,11 +70,6 @@ class storeInfoClass:
     def getAddress(self):
         return self.address
     
-
-    
-
-
-
 def initCrawler():
     #----------These are headless options-----------------
     options = webdriver.ChromeOptions()
@@ -89,7 +84,7 @@ def initCrawler():
     
     #-------------------------------------------------------
 
-def getMap():
+def getCount(query):
     driver.get("http://map.daum.net")
     delay = 2 # seconds
     try:
@@ -98,11 +93,35 @@ def getMap():
         print("Loading took too much time!")
     finally:
         elem.clear()
-        elem.send_keys("스타벅스")
+        elem.send_keys(query)
+        elem.send_keys(Keys.RETURN)
+        time.sleep(1)
+        _html = driver.page_source
+        soup = BeautifulSoup(_html, "lxml")
+        count = soup.find("em", id="info.search.place.cnt")
+        if len(count.text)>3:
+            return True
+        else :
+            if int(count.text) > 524:
+                return True
+            else:
+                return False
+
+def getMap(query):
+    driver.get("http://map.daum.net")
+    delay = 2 # seconds
+    try:
+        elem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.NAME, 'q')))
+    except TimeoutException:
+        print("Loading took too much time!")
+    finally:
+        elem.clear()
+        elem.send_keys(query)
         elem.send_keys(Keys.RETURN)
         time.sleep(1)
         try: 
-            clickElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.ID, "info.search.place.more")))
+            clickElem = WebDriverWait(driver, delay)\
+            .until(EC.presence_of_element_located((By.ID, "info.search.place.more")))
             clickElem.click()
             time.sleep(1)
         except TimeoutException:
@@ -110,7 +129,6 @@ def getMap():
     
 def startCrawling():
     # ******1페이지에 15개의 정보!******
-    
     pageNo = 2
     countStart = 0
     countEnd = 0
@@ -138,7 +156,6 @@ def startCrawling():
     countStart = countEnd
   
 
-
     '''
       page = soup.find("a", id="info.search.page.no2")
       while page.text != None:
@@ -151,8 +168,14 @@ def startCrawling():
 
 
 def main():
-    getMap()
-    startCrawling()
+    query = input("상호명을 입력하세요: ")
+    #525개 미만의 데이터
+    if getCount(query) == True:
+    #525개 이상의 데이터
+    else:
+        
+#     getMap(query)
+#     startCrawling()
 if __name__=="__main__":
     main()
 
