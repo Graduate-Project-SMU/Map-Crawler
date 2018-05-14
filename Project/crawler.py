@@ -53,23 +53,32 @@ def initCrawler():
 
 def getMap():
     driver.get("http://map.daum.net")
-    elem = driver.find_element_by_name('q')
-    elem.clear()
-    elem.send_keys("스타벅스")
-    elem.send_keys(Keys.RETURN)
-    time.sleep(0.5)
-    clickElem = driver.find_element(By.ID, "info.search.place.more")
-    clickElem.click()
-    time.sleep(0.5)
-
+    delay = 2 # seconds
+    try:
+        elem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.NAME, 'q')))
+    except TimeoutException:
+        print("Loading took too much time!")
+    finally:
+        elem.clear()
+        elem.send_keys("스타벅스")
+        elem.send_keys(Keys.RETURN)
+        time.sleep(1)
+        try: 
+            clickElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.ID, "info.search.place.more")))
+            clickElem.click()
+            time.sleep(1)
+        except TimeoutException:
+            print("Loading took too much time!")
+    
 def startCrawling():
-    # 1페이지에 15개의 정보!
+    # ******1페이지에 15개의 정보!******
+    
+    pageNo = 2
     countStart = 0
     countEnd = 0
     _html=driver.page_source
     soup=BeautifulSoup(_html, "lxml")
     
-
     for e in soup.find_all("li", class_="PlaceItem"):
         tempClass = storeInfoClass()
         tempName = e.h6.a["title"]
@@ -88,10 +97,21 @@ def startCrawling():
         for e in soup.find_all("p", class_="newAddress"):
             tempAddresses.append(e.text)
         storeInfos[i].setAddress(tempAddresses[i])
-    
+    countStart = countEnd
+  
+
+
+    '''
+      page = soup.find("a", id="info.search.page.no2")
+      while page.text != None:
+    '''
+        
+        
+        
     for e in storeInfos:
         print(e.getName()+"***"+e.getBranch()+"***"+e.getPhoneNum()+"***"+e.getAddress())
 #         print(e.h6.a["title"])
+#     driver.quit()
     
 
 
