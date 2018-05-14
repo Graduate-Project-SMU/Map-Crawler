@@ -169,9 +169,9 @@ def startCrawling():
 
 def main():
     query = input("상호명을 입력하세요: ")
-    #525개 미만의 데이터
-    if getCount(query) == True:
     #525개 이상의 데이터
+    if getCount(query) == True:
+    #525개 미만의 데이터
     else:
         
 #     getMap(query)
