@@ -72,7 +72,7 @@ def getMapAndCrawlFirstPage(query):
         _html = driver.page_source
         soup = BeautifulSoup(_html, "lxml")
         count = soup.find("em", id="info.search.place.cnt")
-        count = int(count.text)
+        totalDataCount = int(count.text)
         for e in soup.find_all("li", class_="PlaceItem"):
             tempClass = stores.storeInfoClass()
             tempName = e.h6.a["title"]
@@ -80,20 +80,16 @@ def getMapAndCrawlFirstPage(query):
             if realName[0] == query:
                 tempClass.setName(realName[0])
                 tempClass.setBranch(realName[1])
+                tempPhoneNum = e.find("span", class_="phone")
+                tempClass.setPhoneNum(tempPhoneNum.text)
+                tempAddress = e.find("span", class_="subAddress")
+                tempClass.setAddress(tempAddress.text)
+                # tempClass.setAddress(e.div.span['class^="subAddress"'].text)
+                # tempClass.setPhoneNum(e.div.span['class^="phone"'].text)
                 stores.storeInfos.append(tempClass)
                 count_end += 1
             else:
                 continue
-        for i in range(count_start, count_end):
-            tempPhoneNums = []
-            for e in soup.find_all("span", class_="phone"):
-                tempPhoneNums.append(e.text)
-            stores.storeInfos[i].setPhoneNum(tempPhoneNums[i])
-        for i in range(count_start, count_end):
-            tempAddresses = []
-            for e in soup.find_all("span", class_="subAddress"):
-                tempAddresses.append(e.text)
-            stores.storeInfos[i].setAddress(tempAddresses[i])
         count_start = count_end
         try:
             clickElem = WebDriverWait(driver, delay) \
@@ -103,10 +99,10 @@ def getMapAndCrawlFirstPage(query):
         except TimeoutException:
             print("Loading took too much time!")
         finally:
-            return count
+            return totalDataCount
 
 
-def startCrawling(query, pageCount):
+def startCrawling(query, totalDataCount):
     # ******1페이지에 15개의 정보!******
     pageNo = 1
     global count_start
@@ -153,8 +149,9 @@ def main():
     if getCount(query) == True:  # 525개 이상의 데이터
         print("A lot of datas!")
     else:  # 525개 미만의 데이터
-        pageCount = getMapAndCrawlFirstPage(query)
-        startCrawling(query, pageCount)
+        totalDataCount = getMapAndCrawlFirstPage(query)
+
+        #startCrawling(query, totalDataCount)
         printAllStores()
 
 if __name__ == "__main__":
