@@ -6,16 +6,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import time
-import init_crawler
+import crawler_config
 import stores
 import cities
 
 delay = 0
-driver = webdriver.Chrome("/Users/sml/chromedriver")
+driver = None
 count_start = 0
 count_end = 0
 
-
+def init():
+    global driver
+    driver = crawler_config.initCrawler()
 
 
 def getCount(query):
@@ -163,7 +165,7 @@ def printAllStores():
 
 
 def main():
-    init_crawler.initCrawler()
+    init()
     query = input("상호명을 입력하세요: ")
     if getCount(query) == True:  # 525개 이상의 데이터
         print("A lot of datas!")
