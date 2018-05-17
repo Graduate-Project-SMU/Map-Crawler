@@ -17,7 +17,7 @@ count_start = 0
 count_end = 0
 store_infos = []
 
-driver = webdriver.Chrome("/Users/sml/chromedriver")
+#driver = webdriver.Chrome("/Users/sml/chromedriver")
 
 def init():
     global driver
