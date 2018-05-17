@@ -11,6 +11,6 @@ def initCrawler():
     TEST_URL = 'https://intoli.com/blog/making-chrome-headless-undetectable/chrome-headless-test.html'
     options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
 
-    return webdriver.Chrome("/Users/sml/chromedriver", chrome_options=options)
+    return webdriver.Chrome("./driver/chromedriver", chrome_options=options)
 
     # -------------------------------------------------------
