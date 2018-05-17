@@ -14,6 +14,7 @@
 ## Usage
 
 ```
+    $ cd MapCrawler
     $ python main.py
 ```
 
