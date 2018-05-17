@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import time
+import csv
 import crawler_config
 import stores as s
 import cities as c
@@ -17,7 +18,6 @@ count_end = 0
 store_infos = []
 
 driver = webdriver.Chrome("/Users/sml/chromedriver")
-
 
 def init():
     global driver
@@ -115,7 +115,6 @@ def crawlListOver525(query):
         else:
             continue
     count_start = count_end
-
 
 def getMapAndCrawlFirstPageUnder525(query):
     global driver
@@ -269,8 +268,6 @@ def startCrawlingOver525(query, totalDataCount):
                 print("Loading took too much time. total page > 2!!!!")
             pageNo += 1
             totalPageCount -= 1
-
-
 
 def printAllStores():
     global store_infos
