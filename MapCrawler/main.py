@@ -6,8 +6,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import time
-import csv
-import crawler_config
+from backports import csv
+# import make_csv as m
+import crawler_config as cc
 import stores as s
 import cities as c
 
@@ -17,11 +18,11 @@ count_start = 0
 count_end = 0
 store_infos = []
 
-driver = webdriver.Chrome("/Users/sml/chromedriver")
+#driver = webdriver.Chrome("/Users/sml/chromedriver")
 
 def init():
     global driver
-    driver = crawler_config.initCrawler()
+    driver = cc.initCrawler()
 
 def getCount(query):
     global driver
@@ -43,13 +44,16 @@ def getCount(query):
         if len(count.text) > 3:
             return True
         else:
-            totCount = int(count.text)
-            if totCount > 524:
-                return True
+            if count.text != '':
+                totCount = int(count.text, base=10)
+                if totCount > 524:
+                    return True
+                else:
+                    return False
             else:
                 return False
-
 def crawlList(query):
+    print("crawling data....")
     global count_start
     global count_end
     global store_infos
@@ -60,18 +64,18 @@ def crawlList(query):
         tempName = e.h6.a["title"]
         realName = tempName.split(" ")
         if realName[0] == query:
-            tempClass.setName(realName[0])
+            tempClass.setName(realName[0].encode('euc-kr'))
             if len(realName) == 2:
-                tempClass.setBranch(realName[1])
+                tempClass.setBranch(realName[1].encode('euc-kr'))
             else :
-                tempClass.setBranch("")
+                tempClass.setBranch("".encode('euc-kr'))
             tempPhoneNum = e.find("span", class_="phone")
-            tempClass.setPhoneNum(tempPhoneNum.text)
+            tempClass.setPhoneNum(tempPhoneNum.text.encode('euc-kr'))
             tempAddress = e.find("span", class_="subAddress")
             if tempAddress != None:
-                tempClass.setAddress(tempAddress.text)
+                tempClass.setAddress(tempAddress.text.encode('euc-kr'))
             else :
-                tempClass.setAddress("Unknown")
+                tempClass.setAddress("Unknown".encode('euc-kr'))
             store_infos.append(tempClass)
             count_end += 1
         else:
@@ -79,6 +83,7 @@ def crawlList(query):
     count_start = count_end
 
 def crawlListOver525(query):
+    print("crawling data....")
     global count_start
     global count_end
     store_infos
@@ -96,18 +101,18 @@ def crawlListOver525(query):
                 tf = 1
         if tf != 1 :
             if realName[0] == query:
-                tempClass.setName(realName[0])
+                tempClass.setName(realName[0].encode('euc-kr'))
                 if len(realName) == 2:
-                    tempClass.setBranch(realName[1])
+                    tempClass.setBranch(realName[1].encode('euc-kr'))
                 else :
-                    tempClass.setBranch("")
+                    tempClass.setBranch("".encode('euc-kr'))
                 tempPhoneNum = e.find("span", class_="phone")
-                tempClass.setPhoneNum(tempPhoneNum.text)
+                tempClass.setPhoneNum(tempPhoneNum.text.encode('euc-kr'))
                 tempAddress = e.find("span", class_="subAddress")
                 if tempAddress != None:
-                    tempClass.setAddress(tempAddress.text)
+                    tempClass.setAddress(tempAddress.text.encode('euc-kr'))
                 else :
-                    tempClass.setAddress("Unknown")
+                    tempClass.setAddress("Unknown".encode('euc-kr'))
                 store_infos.append(tempClass)
                 count_end += 1
             else:
@@ -135,7 +140,10 @@ def getMapAndCrawlFirstPageUnder525(query):
         _html = driver.page_source
         soup = BeautifulSoup(_html, "lxml")
         count = soup.find("em", id="info.search.place.cnt")
-        total_data_count = int(count.text)
+        if count.text != '':
+            total_data_count = int(count.text)
+        else :
+            total_data_count = 0
         crawlList(query)
         try:
             clickElem = WebDriverWait(driver, delay) \
@@ -166,7 +174,10 @@ def getMapAndCrawlFirstPageOver525(query, locationQuery):
         _html = driver.page_source
         soup = BeautifulSoup(_html, "lxml")
         count = soup.find("em", id="info.search.place.cnt")
-        total_data_count = int(count.text)
+        if count.text != '':
+            total_data_count = int(count.text)
+        else :
+            total_data_count = 0
         crawlList(query)
         try:
             clickElem = WebDriverWait(driver, delay) \
@@ -271,11 +282,49 @@ def startCrawlingOver525(query, totalDataCount):
 
 def printAllStores():
     global store_infos
+    print(type(store_infos[0].getName()))
     for e in store_infos:
         print(str(e.getName()) + " <---> " + str(e.getBranch()) + " <---> " + str(e.getPhoneNum()) + " <---> " + str(e.getAddress()))
 
+def store_to_csv(store_infos):
+    f = open('./store.csv', 'a', encoding='euc-kr')
+    csvWriter = csv.writer(f)
+
+    for e in store_infos:
+        temp_name = None
+        temp_branch = None
+        temp_address = None
+        temp_phone_num = None
+        if type(e.getName()) is not str:
+            temp_name = e.getName().decode('euc-kr')
+        else:
+            temp_name = e.getName()
+        if type(e.getName()) is not str:
+            temp_branch = e.getBranch().decode('euc-kr')
+        else:
+            temp_branch = e.getBranch
+        if type(e.getAddress()) is not str:
+            temp_address = e.getAddress().decode('euc-kr')
+        else:
+            temp_address = e.getAddress()
+        if type(e.getName()) is not str:
+            temp_phone_num = e.getPhoneNum().decode('euc-kr')
+        else:
+            temp_phone_num = e.getPhoneNum()
+
+        csvWriter.writerow(
+            [
+                temp_name,
+                temp_branch,
+                temp_address,
+                temp_phone_num
+            ]
+        )
+
+    f.close()
+
 def main():
-    # init()
+    #init()
     global store_infos
     query = input("상호명을 입력하세요: ")
     if getCount(query) == True:  # 525개 이상의 데이터
@@ -283,14 +332,13 @@ def main():
             locationQuery = c.cities[i]+query
             totalDataCount = getMapAndCrawlFirstPageOver525(query, locationQuery)
             startCrawlingOver525(query, totalDataCount)
-        printAllStores()
     else:  # 525개 미만의 데이터
         totalDataCount = getMapAndCrawlFirstPageUnder525(query)
         if totalDataCount > 15:
             startCrawlingUnder525(query, totalDataCount)
-            printAllStores()
-        else:
-            printAllStores()
+
+    # printAllStores()
+    store_to_csv(store_infos)
 
 if __name__ == "__main__":
     main()
