@@ -99,7 +99,6 @@ def crawlListOver525(query):
             if tfAddress != None:
                 if tfAddress.text == store_infos[i].getAddress().decode('euc-kr'):
                     hasNotAddress = 0
-        print(hasNotAddress)
         if hasNotAddress and realName[0] == query:
             tempClass.setName(realName[0].encode('euc-kr'))
             if len(realName) == 2:
@@ -288,7 +287,7 @@ def printAllStores():
 
 
 def main():
-    # init()
+    init()
     global store_infos
     query = input("상호명을 입력하세요: ")
     if getCount(query) == True:  # 525개 이상의 데이터
@@ -303,6 +302,7 @@ def main():
 
     # printAllStores()
     m.store_to_csv(store_infos)
+    print("crawling data finish!")
 
 if __name__ == "__main__":
     main()
