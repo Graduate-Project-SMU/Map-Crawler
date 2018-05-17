@@ -1,5 +1,3 @@
-storeInfos = []
-
 class storeInfoClass:
     def __init__(self):
         self.name = 0
