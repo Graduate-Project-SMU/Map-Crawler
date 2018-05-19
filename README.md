@@ -3,8 +3,8 @@
 ## Set virtual environment and install packages.
 
 ```
-    $ conda create --name Project python=3.6
-    $ source activate Project  // Mac or Linux
+    $ conda create --name <project-name> python=3.6
+    $ source activate <project-name>  // Mac or Linux
     $ pip install bs4
     $ pip install selenium
     $ pip install lxml
@@ -24,6 +24,11 @@
 
 * Chrome driver를 설치해야 합니다.
     * 링크 : [http://chromedriver.chromium.org/downloads](http://chromedriver.chromium.org/downloads)
+    * 또한, Chrome driver사용을 위하여 적절한 위치에 Chrome driver를 위치시키고 crawler_config.py파일을 수정하여야 합니다.
+   
+```
+   return webdriver.Chrome("이 부분을 고쳐주세요!", chrome_options=options)
+```
 
 * 입력을 받아 CSV파일(store.csv)을 생성합니다.
 
@@ -38,6 +43,7 @@ cities.py의 코드를 수정해주세요.
 
 
 ## Development Tools
+
 * Pycharm
 
 * Anaconda3
@@ -47,4 +53,3 @@ cities.py의 코드를 수정해주세요.
 * Chrome driver
 
 * Excel
-
