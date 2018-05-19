@@ -26,9 +26,9 @@
     * 링크 : [http://chromedriver.chromium.org/downloads](http://chromedriver.chromium.org/downloads)
     * 또한, Chrome driver사용을 위하여 적절한 위치에 Chrome driver를 위치시키고 crawler_config.py파일을 수정하여야 합니다.
    
-   ```
-    return webdriver.Chrome("이 부분을 고쳐주세요!", chrome_options=options)
-   ```
+```
+   return webdriver.Chrome("이 부분을 고쳐주세요!", chrome_options=options)
+```
 
 * 입력을 받아 CSV파일(store.csv)을 생성합니다.
 
