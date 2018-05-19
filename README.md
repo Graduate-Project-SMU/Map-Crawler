@@ -3,8 +3,8 @@
 ## Set virtual environment and install packages.
 
 ```
-    $ conda create --name Project python=3.6
-    $ source activate Project  // Mac or Linux
+    $ conda create --name <project-name> python=3.6
+    $ source activate <project-name>  // Mac or Linux
     $ pip install bs4
     $ pip install selenium
     $ pip install lxml
@@ -38,6 +38,7 @@ cities.py의 코드를 수정해주세요.
 
 
 ## Development Tools
+
 * Pycharm
 
 * Anaconda3
@@ -47,4 +48,3 @@ cities.py의 코드를 수정해주세요.
 * Chrome driver
 
 * Excel
-
