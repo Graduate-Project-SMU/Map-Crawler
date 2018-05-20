@@ -1,6 +1,6 @@
 # Map-Crawler
 
-## Executable files in here! Clone it now!
+## Executable files in here! Clone it now! (Only for Window User)
 => [https://github.com/sangnyyy/Map-Crawler-Executable-File](https://github.com/sangnyyy/Map-Crawler-Executable-File)
 
 ## Set virtual environment and install packages.
