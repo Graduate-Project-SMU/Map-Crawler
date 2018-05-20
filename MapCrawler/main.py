@@ -302,7 +302,8 @@ def main():
             startCrawlingUnder525(query, totalDataCount)
 
     # printAllStores()
-    m.store_to_csv(store_infos)
+    # m.store_to_csv(store_infos)
+    m.store_to_csv_pandas(store_infos)
     print("crawling data finish!")
 
 if __name__ == "__main__":
