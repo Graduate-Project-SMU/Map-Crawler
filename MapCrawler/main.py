@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import time
+import sys
 import make_csv as m
 import crawler_config as cc
 import stores as s
@@ -313,6 +314,8 @@ def main():
             continueTf = True
         else:
             continueTf = False
+    print("검색을 종료합니다.")
+    print("Ctrl + C를 눌러 프로그램을 종료하세요!")
 
 if __name__ == "__main__":
     main()
