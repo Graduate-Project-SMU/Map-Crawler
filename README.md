@@ -10,6 +10,7 @@
     $ pip install selenium
     $ pip install lxml
     $ pip install backports.csv
+    $ pip install pandas
 ```
 
 ## Usage
