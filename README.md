@@ -1,10 +1,11 @@
 # Map-Crawler
 
+## Executable files in here! Clone it now! (Only for Window User)
+=> [https://github.com/sangnyyy/Map-Crawler-Executable-File](https://github.com/sangnyyy/Map-Crawler-Executable-File)
+
 ## Set virtual environment and install packages.
 
 ```
-    $ conda create --name <project-name> python=3.6
-    $ source activate <project-name>  // Mac or Linux
     $ pip install bs4
     $ pip install selenium
     $ pip install lxml
@@ -19,6 +20,7 @@
 ```
 
 ## Notice
+* 다음지도를 기반으로 크롤링을 진행합니다.
 
 * (다음지도에 등록된)정확한 상호명을 입력해야 합니다.
 

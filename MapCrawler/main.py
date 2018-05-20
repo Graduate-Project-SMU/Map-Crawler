@@ -289,22 +289,30 @@ def printAllStores():
 
 def main():
     init()
-    global store_infos
-    query = input("상호명을 입력하세요: ")
-    if getCount(query) == True:  # 525개 이상의 데이터
-        for i in range(0, len(c.cities)):
-            locationQuery = c.cities[i]+query
-            totalDataCount = getMapAndCrawlFirstPageOver525(query, locationQuery)
-            startCrawlingOver525(query, totalDataCount)
-    else:  # 525개 미만의 데이터
-        totalDataCount = getMapAndCrawlFirstPageUnder525(query)
-        if totalDataCount > 15:
-            startCrawlingUnder525(query, totalDataCount)
+    continueTf = True
+    while continueTf:
+        global store_infos
+        store_infos = []
+        query = input("상호명을 입력하세요: ")
+        if getCount(query) == True:  # 525개 이상의 데이터
+            for i in range(0, len(c.cities)):
+                locationQuery = c.cities[i]+query
+                totalDataCount = getMapAndCrawlFirstPageOver525(query, locationQuery)
+                startCrawlingOver525(query, totalDataCount)
+        else:  # 525개 미만의 데이터
+            totalDataCount = getMapAndCrawlFirstPageUnder525(query)
+            if totalDataCount > 15:
+                startCrawlingUnder525(query, totalDataCount)
 
-    # printAllStores()
-    # m.store_to_csv(store_infos)
-    m.store_to_csv_pandas(store_infos)
-    print("crawling data finish!")
+        # printAllStores()
+        # m.store_to_csv(store_infos)
+        m.store_to_csv_pandas(store_infos)
+        print("crawling data finish!")
+        tf = input("검색을 계속 진행하시겠습니까? (y/n): ")
+        if tf=='y':
+            continueTf = True
+        else:
+            continueTf = False
 
 if __name__ == "__main__":
     main()
