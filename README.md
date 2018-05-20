@@ -3,8 +3,6 @@
 ## Set virtual environment and install packages.
 
 ```
-    $ conda create --name <project-name> python=3.6
-    $ source activate <project-name>  // Mac or Linux
     $ pip install bs4
     $ pip install selenium
     $ pip install lxml
