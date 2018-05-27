@@ -19,9 +19,11 @@ count_start = 0
 count_end = 0
 store_infos = []
 
-#driver = webdriver.Chrome("/Users/sml/chromedriver")
-
 def init():
+    global driver
+    driver = webdriver.Chrome("./driver/chromedriver")
+
+def init_headless():
     global driver
     driver = cc.initCrawler()
 
@@ -54,7 +56,7 @@ def getCount(query):
             else:
                 return False
 
-def crawlList(query):
+def crawlListUnder525(query):
     print("now program crawls data....")
     global count_start
     global count_end
@@ -121,7 +123,7 @@ def crawlListOver525(query):
 
     count_start = count_end
 
-def getMapAndCrawlFirstPageUnder525(query):
+def getMapUnder525(query):
     global driver
     global delay
     global count_start
@@ -144,7 +146,7 @@ def getMapAndCrawlFirstPageUnder525(query):
             total_data_count = int(count.text)
         else :
             total_data_count = 0
-        crawlList(query)
+        # crawlListUnder525(query)
         try:
             clickElem = WebDriverWait(driver, delay) \
                 .until(EC.presence_of_element_located((By.ID, "info.search.place.more")))
@@ -155,7 +157,7 @@ def getMapAndCrawlFirstPageUnder525(query):
         finally:
             return total_data_count
 
-def getMapAndCrawlFirstPageOver525(query, locationQuery):
+def getMapOver525(query, locationQuery):
     global driver
     global delay
     global count_start
@@ -178,6 +180,8 @@ def getMapAndCrawlFirstPageOver525(query, locationQuery):
             total_data_count = int(count.text)
         else :
             total_data_count = 0
+
+        #지역명 + 상호명 일 때는 2페이지부터 보여줌으로 한번 긁고 시작해야한다!
         crawlListOver525(query)
         try:
             clickElem = WebDriverWait(driver, delay) \
@@ -203,11 +207,20 @@ def startCrawlingUnder525(query, totalDataCount):
     else :
         totalPage = tempIntNum
 
+
     # 1페이지와 2페이지는 시작하면서 읽어내기 때문
     if totalPage >2 :
-        crawlList(query)
+        # try:
+        #     clickElem = WebDriverWait(driver, delay) \
+        #         .until(EC.presence_of_element_located((By.ID, "info.search.place.more")))
+        #     clickElem.click()
+        #     time.sleep(1)
+        # except TimeoutException:
+        #     print("Loading took too much time!")
+
+        crawlListUnder525(query)
         totalPageCount = totalPage - 2
-        pageNo = 3
+        pageNo = 2
 
         while totalPageCount > 0 :
             if ((pageNo-1)%5) == 0: #arrow
@@ -216,7 +229,7 @@ def startCrawlingUnder525(query, totalDataCount):
                         .until(EC.presence_of_element_located((By.ID, "info.search.page.next")))
                     clickElem.click()
                     time.sleep(1)
-                    crawlList(query)
+                    crawlListUnder525(query)
                 except TimeoutException:
                     print("Loading took too much time. total page > 2!!!!")
                 pageNo = 2
@@ -228,13 +241,13 @@ def startCrawlingUnder525(query, totalDataCount):
                         .until(EC.presence_of_element_located((By.ID, clickId)))
                     clickElem.click()
                     time.sleep(1)
-                    crawlList(query)
+                    crawlListUnder525(query)
                 except TimeoutException:
                     print("Loading took too much time. total page > 2!!!!")
                 pageNo += 1
                 totalPageCount -= 1
     else :
-        crawlList(query)
+        crawlListUnder525(query)
 
 def startCrawlingOver525(query, totalDataCount):
     # ******1페이지에 15개의 정보!******
@@ -290,18 +303,19 @@ def printAllStores():
 
 def main():
     init()
+    # init_headless()
     continueTf = True
+    global store_infos
     while continueTf:
-        global store_infos
         store_infos = []
         query = input("상호명을 입력하세요: ")
         if getCount(query) == True:  # 525개 이상의 데이터
             for i in range(0, len(c.cities)):
                 locationQuery = c.cities[i]+query
-                totalDataCount = getMapAndCrawlFirstPageOver525(query, locationQuery)
+                totalDataCount = getMapOver525(query, locationQuery)
                 startCrawlingOver525(query, totalDataCount)
         else:  # 525개 미만의 데이터
-            totalDataCount = getMapAndCrawlFirstPageUnder525(query)
+            totalDataCount = getMapUnder525(query)
             if totalDataCount > 15:
                 startCrawlingUnder525(query, totalDataCount)
 
