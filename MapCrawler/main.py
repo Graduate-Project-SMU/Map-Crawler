@@ -154,6 +154,15 @@ def getMapUnder525(query):
             time.sleep(1)
         except TimeoutException:
             print("Loading took too much time!")
+
+        try:
+            clickElem = WebDriverWait(driver, delay) \
+                .until(EC.presence_of_element_located((By.ID, "info.search.page.no1")))
+            clickElem.click()
+            time.sleep(1)
+        except TimeoutException:
+            print("Loading took too much time!")
+
         finally:
             return total_data_count
 
@@ -209,7 +218,7 @@ def startCrawlingUnder525(query, totalDataCount):
 
 
     # 1페이지와 2페이지는 시작하면서 읽어내기 때문
-    if totalPage >2 :
+    if totalPage >1 :
         # try:
         #     clickElem = WebDriverWait(driver, delay) \
         #         .until(EC.presence_of_element_located((By.ID, "info.search.place.more")))
@@ -219,7 +228,7 @@ def startCrawlingUnder525(query, totalDataCount):
         #     print("Loading took too much time!")
 
         crawlListUnder525(query)
-        totalPageCount = totalPage - 2
+        totalPageCount = totalPage - 1
         pageNo = 2
 
         while totalPageCount > 0 :
