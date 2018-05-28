@@ -19,6 +19,9 @@ count_start = 0
 count_end = 0
 store_infos = []
 
+#중복되는 주소를 위한 리스트
+store_addresses = []
+
 def init():
     global driver
     driver = webdriver.Chrome("./driver/chromedriver")
@@ -56,38 +59,12 @@ def getCount(query):
             else:
                 return False
 
-def crawlListUnder525(query):
-    print("now program crawls data....")
-    global count_start
-    global count_end
-    global store_infos
-    _html = driver.page_source
-    soup = BeautifulSoup(_html, "lxml")
-    for e in soup.find_all("li", class_="PlaceItem"):
-        tempClass = s.storeInfoClass()
-        tempName = e.h6.a["title"]
-        realName = tempName.split(" ")
-        if realName[0] == query:
-            tempClass.setName(realName[0].encode('euc-kr'))
-            if len(realName) == 2:
-                tempClass.setBranch(realName[1].encode('euc-kr'))
-            else :
-                tempClass.setBranch("".encode('euc-kr'))
-            tempPhoneNum = e.find("span", class_="phone")
-            tempClass.setPhoneNum(tempPhoneNum.text.encode('euc-kr'))
-            tempAddress = e.find("span", class_="subAddress")
-            if tempAddress != None:
-                tempClass.setAddress(tempAddress.text.encode('euc-kr'))
-            else :
-                tempClass.setAddress("Unknown".encode('euc-kr'))
-            store_infos.append(tempClass)
-            count_end += 1
-        else:
-            continue
-    count_start = count_end
 
-def crawlListOver525(query):
+
+def crawlList(query):
+
     print("now program crawls data....")
+    global store_addresses
     global count_start
     global count_end
     global store_infos
@@ -103,20 +80,29 @@ def crawlListOver525(query):
             if tfAddress != None:
                 if tfAddress.text == store_infos[i].getAddress().decode('euc-kr'):
                     hasNotAddress = 0
-        if hasNotAddress and realName[0] == query:
+        if hasNotAddress == 1 and realName[0] == query:
             tempClass.setName(realName[0].encode('euc-kr'))
-            if len(realName) == 2:
-                tempClass.setBranch(realName[1].encode('euc-kr'))
+            tempAddress = e.find("span", class_="subAddress")
+            branch = ""
+            if len(realName) != 2:
+                if tempAddress != None and (tempAddress.text not in store_addresses):
+                    for i in range(1, len(realName)):
+                        branch = branch + ' ' + realName[i]
+                else :
+                    continue
             else :
-                tempClass.setBranch("".encode('euc-kr'))
+                branch = realName[1]
+            tempClass.setBranch(branch.encode('euc-kr'))
             tempPhoneNum = e.find("span", class_="phone")
             tempClass.setPhoneNum(tempPhoneNum.text.encode('euc-kr'))
-            tempAddress = e.find("span", class_="subAddress")
+
             if tempAddress != None:
+                store_addresses.append(tempAddress.text)
                 tempClass.setAddress(tempAddress.text.encode('euc-kr'))
+                store_infos.append(tempClass)
             else :
                 tempClass.setAddress("Unknown".encode('euc-kr'))
-            store_infos.append(tempClass)
+
             count_end += 1
         else:
             continue
@@ -146,7 +132,7 @@ def getMapUnder525(query):
             total_data_count = int(count.text)
         else :
             total_data_count = 0
-        # crawlListUnder525(query)
+        # crawlList(query)
         try:
             clickElem = WebDriverWait(driver, delay) \
                 .until(EC.presence_of_element_located((By.ID, "info.search.place.more")))
@@ -191,7 +177,7 @@ def getMapOver525(query, locationQuery):
             total_data_count = 0
 
         #지역명 + 상호명 일 때는 2페이지부터 보여줌으로 한번 긁고 시작해야한다!
-        crawlListOver525(query)
+        crawlList(query)
         try:
             clickElem = WebDriverWait(driver, delay) \
                 .until(EC.presence_of_element_located((By.ID, "info.search.place.more")))
@@ -227,7 +213,7 @@ def startCrawlingUnder525(query, totalDataCount):
         # except TimeoutException:
         #     print("Loading took too much time!")
 
-        crawlListUnder525(query)
+        crawlList(query)
         totalPageCount = totalPage - 1
         pageNo = 2
 
@@ -238,7 +224,7 @@ def startCrawlingUnder525(query, totalDataCount):
                         .until(EC.presence_of_element_located((By.ID, "info.search.page.next")))
                     clickElem.click()
                     time.sleep(1)
-                    crawlListUnder525(query)
+                    crawlList(query)
                 except TimeoutException:
                     print("Loading took too much time. total page > 2!!!!")
                 pageNo = 2
@@ -250,13 +236,13 @@ def startCrawlingUnder525(query, totalDataCount):
                         .until(EC.presence_of_element_located((By.ID, clickId)))
                     clickElem.click()
                     time.sleep(1)
-                    crawlListUnder525(query)
+                    crawlList(query)
                 except TimeoutException:
                     print("Loading took too much time. total page > 2!!!!")
                 pageNo += 1
                 totalPageCount -= 1
     else :
-        crawlListUnder525(query)
+        crawlList(query)
 
 def startCrawlingOver525(query, totalDataCount):
     # ******1페이지에 15개의 정보!******
@@ -273,7 +259,7 @@ def startCrawlingOver525(query, totalDataCount):
         totalPage = tempIntNum
 
     #2번째
-    crawlListOver525(query)
+    crawlList(query)
 
 
     totalPageCount = totalPage - 2
@@ -286,7 +272,7 @@ def startCrawlingOver525(query, totalDataCount):
                    .until(EC.presence_of_element_located((By.ID, "info.search.page.next")))
                 clickElem.click()
                 time.sleep(1)
-                crawlListOver525(query)
+                crawlList(query)
             except TimeoutException:
                 print("Loading took too much time. total page > 2!!!!")
             pageNo = 2
@@ -298,7 +284,7 @@ def startCrawlingOver525(query, totalDataCount):
                     .until(EC.presence_of_element_located((By.ID, clickId)))
                 clickElem.click()
                 time.sleep(1)
-                crawlListOver525(query)
+                crawlList(query)
             except TimeoutException:
                 print("Loading took too much time. total page > 2!!!!")
             pageNo += 1
@@ -311,7 +297,7 @@ def printAllStores():
 
 
 def main():
-    #init()
+
     init_headless()
     continueTf = True
     global store_infos
@@ -337,8 +323,10 @@ def main():
             continueTf = True
         else:
             continueTf = False
+
     print("검색을 종료합니다.")
     print("Ctrl + C를 눌러 프로그램을 종료하세요!")
+
 
 if __name__ == "__main__":
     main()
