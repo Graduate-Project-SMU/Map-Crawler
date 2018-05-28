@@ -297,7 +297,7 @@ def printAllStores():
 
 
 def main():
-    # init()
+
     init_headless()
     continueTf = True
     global store_infos

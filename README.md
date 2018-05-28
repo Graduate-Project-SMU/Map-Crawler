@@ -1,14 +1,16 @@
 # Map-Crawler
 
+### 실행파일을 제작하여 저의 구글 드라이브에 업로드 하였습니다. 실행파일을 이용하실 분들을 아래 링크를 이용해주세요!
+=> [https://github.com/sangnyyy/Map-Crawler-Executable-File](https://github.com/sangnyyy/Map-Crawler-Executable-File)
+
 ## Set virtual environment and install packages.
 
 ```
-    $ conda create --name <project-name> python=3.6
-    $ source activate <project-name>  // Mac or Linux
     $ pip install bs4
     $ pip install selenium
     $ pip install lxml
     $ pip install backports.csv
+    $ pip install pandas
 ```
 
 ## Usage
@@ -19,6 +21,7 @@
 ```
 
 ## Notice
+* 다음지도를 기반으로 크롤링을 진행합니다.
 
 * (다음지도에 등록된)정확한 상호명을 입력해야 합니다.
 
