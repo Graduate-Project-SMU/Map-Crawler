@@ -68,11 +68,14 @@ def crawlListUnder525(query):
         tempName = e.h6.a["title"]
         realName = tempName.split(" ")
         if realName[0] == query:
-            tempClass.setName(realName[0].encode('euc-kr'))
-            if len(realName) == 2:
-                tempClass.setBranch(realName[1].encode('euc-kr'))
+            if len(realName) != 2:
+                branch = ""
+                for i in range(1, len(realName)):
+                    branch = branch + ' '+ realName[i]
             else :
-                tempClass.setBranch("".encode('euc-kr'))
+                branch = realName[1]
+            tempClass.setName(realName[0].encode('euc-kr'))
+            tempClass.setBranch(branch.encode('euc-kr'))
             tempPhoneNum = e.find("span", class_="phone")
             tempClass.setPhoneNum(tempPhoneNum.text.encode('euc-kr'))
             tempAddress = e.find("span", class_="subAddress")
@@ -105,10 +108,15 @@ def crawlListOver525(query):
                     hasNotAddress = 0
         if hasNotAddress and realName[0] == query:
             tempClass.setName(realName[0].encode('euc-kr'))
-            if len(realName) == 2:
-                tempClass.setBranch(realName[1].encode('euc-kr'))
+            if len(realName) != 2:
+                branch = ""
+                for i in range(1, len(realName)):
+                    branch = branch + ' '+ realName[i]
             else :
-                tempClass.setBranch("".encode('euc-kr'))
+                branch = realName[1]
+            for i in range(1, len(realName)):
+                branch = branch + ' ' + realName[i]
+            tempClass.setBranch(branch.encode('euc-kr'))
             tempPhoneNum = e.find("span", class_="phone")
             tempClass.setPhoneNum(tempPhoneNum.text.encode('euc-kr'))
             tempAddress = e.find("span", class_="subAddress")
